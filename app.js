@@ -13,6 +13,7 @@ document.querySelector('#connect').addEventListener('click', function(event) {
    })
    .catch(function(error) {
       console.error('ERROR!', error);
+      alert(error);
     });
 });
 
