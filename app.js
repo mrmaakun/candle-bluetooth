@@ -5,7 +5,7 @@ document.querySelector('#connect').addEventListener('click', function(event) {
    document.querySelector('#state').classList.add('connecting');
    playbulbCandle.connect()
    .then(() => {
-     console.log(playbulbCandle.device);
+     //console.log(playbulbCandle.device);
      document.querySelector('#state').classList.remove('connecting');
      document.querySelector('#state').classList.add('connected');
      return playbulbCandle.getDeviceName().then(handleDeviceName)
@@ -25,7 +25,19 @@ function handleBatteryLevel(batteryLevel) {
 }
 
 function changeColor() {
-  /* This function is called when user clicks on an effect radio button. */
+  var effect = document.querySelector('[name="effectSwitch"]:checked').id;
+  console.log(effect);
+  switch(effect) {
+    case 'noEffect':
+      playbulbCandle.setColor(r, g, b).then(onColorChanged);
+      break;
+    case 'candleEffect':
+      playbulbCandle.setCandleEffectColor(r, g, b).then(onColorChanged);
+      break;
+    case 'flashing':
+      playbulbCandle.setFlashingColor(r, g, b).then(onColorChanged);
+      break;
+  }
 }
 
 var r = g = b = 255;

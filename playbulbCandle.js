@@ -6,6 +6,10 @@
 
     const CANDLE_SERVICE_UUID = 0xFF02;
     const CANDLE_DEVICE_NAME_UUID = 0xFFFF;
+    const CANDLE_COLOR_UUID = 0xFFFC;
+    const CANDLE_EFFECT_UUID = 0xFFFB;
+
+  
   
     class PlaybulbCandle {
       constructor() {
@@ -36,6 +40,31 @@
           .then(service => service.getCharacteristic('battery_level'))
           .then(characteristic => characteristic.readValue())
           .then(data => data.getUint8(0));
+      }
+
+      setColor(r, g, b) {
+        let data = new Uint8Array([0x00, r, g, b]);
+        console.log("Setting color");
+        console.log(data);
+        return this.device.gatt.getPrimaryService(CANDLE_SERVICE_UUID)
+        .then(service => service.getCharacteristic(CANDLE_COLOR_UUID))
+        .then(characteristic => characteristic.writeValue(data))
+        .then(() => [r,g,b]);
+      }
+
+      setCandleEffectColor(r, g, b) {
+        let data = new Uint8Array([0x00, r, g, b, 0x04, 0x00, 0x01, 0x00]);
+        return this.device.gatt.getPrimaryService(CANDLE_SERVICE_UUID)
+        .then(service => service.getCharacteristic(CANDLE_EFFECT_UUID))
+        .then(characteristic => characteristic.writeValue(data))
+        .then(() => [r,g,b]);
+      }
+      setFlashingColor(r, g, b) {
+        let data = new Uint8Array([0x00, r, g, b, 0x00, 0x00, 0x1F, 0x00]);
+        return this.device.gatt.getPrimaryService(CANDLE_SERVICE_UUID)
+        .then(service => service.getCharacteristic(CANDLE_EFFECT_UUID))
+        .then(characteristic => characteristic.writeValue(data))
+        .then(() => [r,g,b]);
       }
     }
   
