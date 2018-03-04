@@ -38,6 +38,15 @@ function changeColor() {
     case 'flashing':
       playbulbCandle.setFlashingColor(r, g, b).then(onColorChanged);
       break;
+    case 'pulse':
+      playbulbCandle.setPulseColor(r, g, b).then(onColorChanged);
+      break;
+    case 'rainbow':
+      playbulbCandle.setRainbow().then(onColorChanged);
+      break;
+    case 'rainbowFade':
+      playbulbCandle.setRainbowFade().then(onColorChanged);
+      break;
   }
 }
 

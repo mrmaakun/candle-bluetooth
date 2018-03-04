@@ -9,11 +9,12 @@
     const CANDLE_COLOR_UUID = 0xFFFC;
     const CANDLE_EFFECT_UUID = 0xFFFB;
 
-  
+
   
     class PlaybulbCandle {
       constructor() {
         this.device = null;
+        this.isEffectSet = false;
       }
 
       connect() {
@@ -43,7 +44,19 @@
       }
 
       setColor(r, g, b) {
-        let data = new Uint8Array([0x00, r, g, b]);
+
+        let data = null;
+
+        if (this.isEffectSet == true){
+          let data = new Uint8Array([0x00, r, g, b, 0x05, 0x00, 0x01, 0x00]);
+          this.isEffectSet = false;
+          return this.device.gatt.getPrimaryService(CANDLE_SERVICE_UUID)
+          .then(service => service.getCharacteristic(CANDLE_EFFECT_UUID))
+          .then(characteristic => characteristic.writeValue(data))
+          
+        }
+
+        data = new Uint8Array([0x00, r, g, b]);
         console.log("Setting color");
         console.log(data);
         return this.device.gatt.getPrimaryService(CANDLE_SERVICE_UUID)
@@ -54,6 +67,7 @@
 
       setCandleEffectColor(r, g, b) {
         let data = new Uint8Array([0x00, r, g, b, 0x04, 0x00, 0x01, 0x00]);
+        this.isEffectSet = true;
         return this.device.gatt.getPrimaryService(CANDLE_SERVICE_UUID)
         .then(service => service.getCharacteristic(CANDLE_EFFECT_UUID))
         .then(characteristic => characteristic.writeValue(data))
@@ -61,11 +75,35 @@
       }
       setFlashingColor(r, g, b) {
         let data = new Uint8Array([0x00, r, g, b, 0x00, 0x00, 0x1F, 0x00]);
+        this.isEffectSet = true;
         return this.device.gatt.getPrimaryService(CANDLE_SERVICE_UUID)
         .then(service => service.getCharacteristic(CANDLE_EFFECT_UUID))
         .then(characteristic => characteristic.writeValue(data))
         .then(() => [r,g,b]);
       }
+      setPulseColor(r, g, b) {
+        let data = new Uint8Array([0x00, r, g, b, 0x01, 0x00, 0x09, 0x00]);
+        this.isEffectSet = true;
+        return this.device.gatt.getPrimaryService(CANDLE_SERVICE_UUID)
+        .then(service => service.getCharacteristic(CANDLE_EFFECT_UUID))
+        .then(characteristic => characteristic.writeValue(data))
+        .then(() => [r,g,b]);
+      }
+      setRainbow() {
+        let data = new Uint8Array([0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x01, 0x00]);
+        this.isEffectSet = true;
+        return this.device.gatt.getPrimaryService(CANDLE_SERVICE_UUID)
+        .then(service => service.getCharacteristic(CANDLE_EFFECT_UUID))
+        .then(characteristic => characteristic.writeValue(data));
+      }
+      setRainbowFade() {
+        let data = new Uint8Array([0x01, 0x00, 0x00, 0x00, 0x03, 0x00, 0x26, 0x00]);
+        this.isEffectSet = true;
+        return this.device.gatt.getPrimaryService(CANDLE_SERVICE_UUID)
+        .then(service => service.getCharacteristic(CANDLE_EFFECT_UUID))
+        .then(characteristic => characteristic.writeValue(data));
+      }
+
     }
   
     window.playbulbCandle = new PlaybulbCandle();
